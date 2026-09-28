@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gustavo & Ana — 1 mês de nós</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ EDITE AQUI: procure "EDITAR" no arquivo para personalizar ============ */
+  :root{
+    --preto: #0b0a0d;
+    --preto-azulado: #0e1016;
+    --vinho: #5c1826;
+    --vinho-profundo: #340c14;
+    --rose: #d9b8b0;
+    --branco: #f6efe9;
+    --dourado: #c9a876;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Jost', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth; scroll-padding-top: env(safe-area-inset-top,0px);}
+  html, body{ height:100%; }
+  body{
+    background: var(--preto);
+    color: var(--branco);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1,h2,h3,.serif{font-family: var(--serif);}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important;} }
+  button{ font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+  /* ============ ABERTURA ============ */
+  #abertura{
+    position: fixed; inset: 0; z-index: 100;
+    background: radial-gradient(ellipse at center, var(--preto-azulado) 0%, var(--preto) 75%);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    text-align:center; padding: 24px;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+  }
+  #abertura.saiu{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  .linha-abertura{
+    font-family: var(--serif); font-size: clamp(1.6rem, 6vw, 2.6rem);
+    font-style: italic; color: var(--branco); letter-spacing:0.02em;
+    opacity:0; transform: translateY(10px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .linha-abertura.on{ opacity:1; transform:none; }
+
+  .envelope-wrap{ margin-top: 48px; opacity:0; transition: opacity 1s ease; }
+  .envelope-wrap.on{ opacity:1; }
+
+  .envelope{ width: 180px; height: 120px; position:relative; margin: 0 auto; animation: flutuar 3.4s ease-in-out infinite; }
+  @keyframes flutuar{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+  .env-corpo{ position:absolute; inset:0; background: linear-gradient(155deg, var(--vinho) 0%, var(--vinho-profundo) 100%); border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,.55); }
+  .env-aba{
+    position:absolute; top:0; left:0; width:100%; height:60%;
+    background: linear-gradient(160deg, #6e2130, var(--vinho-profundo));
+    clip-path: polygon(0 0, 100% 0, 50% 85%);
+    transform-origin: top center; transition: transform 1s cubic-bezier(.6,-0.2,.2,1.2);
+    border-radius: 4px 4px 0 0;
+  }
+  .envelope.aberto .env-aba{ transform: rotateX(180deg); }
+  .env-selo{ position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); width:26px; height:26px; border-radius:50%; background: var(--dourado); box-shadow: 0 2px 8px rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:3; }
+  .env-selo svg{ width:13px; height:13px; display:block; }
+  .toque{ font-family: var(--sans); font-size:0.8rem; letter-spacing:0.12em; color: var(--rose); opacity:.75; margin-top:18px; }
+
+  .btn{
+    font-family: var(--sans); font-size: 1rem; letter-spacing: 0.03em;
+    background: var(--dourado); color: var(--vinho-profundo);
+    border: 1px solid var(--dourado); padding: 16px 36px; border-radius: 999px;
+    cursor: pointer; margin-top: 30px; transition: transform .3s ease, box-shadow .3s ease;
+    min-height: 48px;
+  }
+  .btn:active{ transform: scale(.96); }
+  .btn:focus-visible{ outline: 2px solid var(--branco); outline-offset: 3px; }
+  .btn-secundario{ background: transparent; color: var(--branco); }
+  .btn-secundario:hover, .btn-secundario:focus-visible{ background: var(--dourado); color: var(--vinho-profundo); }
+  .btn-oculto{ opacity:0; transform: translateY(8px); transition: opacity .8s ease, transform .8s ease; position:relative; z-index:5; user-select:none; }
+  .btn-oculto.on{ opacity:1; transform:none; }
+
+  #carta-modal{
+    position:fixed; inset:0; z-index:110; background: rgba(5,4,6,.94);
+    display:flex; align-items:center; justify-content:center; padding: 28px;
+    opacity:0; visibility:hidden; transition: opacity .7s ease, visibility .7s ease;
+  }
+  #carta-modal.ver{ opacity:1; visibility:visible; }
+  .carta-papel{
+    max-width: 560px; width:100%; background: linear-gradient(180deg, #16121a, #100c12);
+    border: 1px solid rgba(201,168,118,.25); border-radius: 10px; padding: 44px 30px; text-align:center;
+    transform: translateY(30px); opacity:0; transition: transform .8s ease, opacity .8s ease;
+    max-height: 84vh; overflow-y:auto;
+  }
+  #carta-modal.ver .carta-papel{ transform: translateY(0); opacity:1; }
+  .carta-papel h2{ font-size: clamp(1.6rem,5vw,2.1rem); font-weight:500; margin-bottom: 20px; color: var(--rose); }
+  .carta-papel p{ font-family: var(--serif); font-size: clamp(1.05rem,3vw,1.25rem); line-height:1.7; color: var(--branco); margin-bottom: 16px; }
+  .assinatura{ font-family: var(--serif); font-style: italic; font-size: 1.3rem; color: var(--dourado); margin-top: 22px; }
+
+  .particula{ position:fixed; z-index:98; pointer-events:none; font-size: 1rem; color: var(--rose); opacity:0; }
+  @keyframes subir-sumir{ 0%{opacity:0; transform: translateY(0) scale(.8);} 15%{opacity:.85;} 100%{opacity:0; transform: translateY(-140px) scale(1.1);} }
+
+  main{ opacity:0; transition: opacity 1s ease; }
+  main.visivel{ opacity:1; }
+  section{ padding: 100px 22px; max-width: 720px; margin: 0 auto; position:relative; }
+  .reveal{ opacity:0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.ativo{ opacity:1; transform:none; }
+
+  #hero{ min-height: 92vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background: radial-gradient(ellipse at 50% 20%, rgba(92,24,38,.35), transparent 60%); }
+  #hero .eyebrow{ color: var(--dourado); font-size: .8rem; letter-spacing: .18em; margin-bottom: 18px; }
+  #hero h1{ font-size: clamp(2.6rem, 9vw, 4.4rem); font-weight:500; line-height:1.05; }
+  #hero .nomes{ font-family: var(--serif); font-style: italic; color: var(--rose); font-size: clamp(1.3rem,4vw,1.7rem); margin-top: 14px; }
+  #hero p{ max-width: 480px; margin: 26px auto 0; line-height:1.7; color: rgba(246,239,233,.8); font-size: 1.05rem; }
+  .seta-baixo{ margin-top: 46px; font-size: .85rem; letter-spacing:.1em; color: var(--rose); text-decoration:none; display:inline-block; }
+  .seta-baixo span{ display:block; margin-top:8px; animation: desce 2s ease-in-out infinite; }
+  @keyframes desce{ 0%,100%{transform:translateY(0); opacity:.5;} 50%{transform:translateY(6px); opacity:1;} }
+
+  .titulo-secao{ text-align:center; margin-bottom: 12px; font-size: clamp(1.8rem,6vw,2.4rem); font-weight:500; }
+  .subtitulo-secao{ text-align:center; color: var(--rose); font-family: var(--serif); font-style:italic; font-size:1.1rem; margin-bottom: 56px; opacity:.85; }
+
+  .linha-tempo{ position:relative; padding-left: 32px; }
+  .linha-tempo::before{ content:''; position:absolute; left:6px; top:6px; bottom:6px; width:1px; background: linear-gradient(var(--vinho), var(--dourado), var(--vinho)); opacity:.5; }
+  .evento{ position:relative; margin-bottom: 44px; }
+  .evento::before{ content:''; position:absolute; left:-32px; top:6px; width:10px; height:10px; border-radius:50%; background: var(--dourado); box-shadow: 0 0 0 4px rgba(201,168,118,.15); }
+  .evento h3{ font-size: 1.3rem; color: var(--branco); font-weight:500; margin-bottom:6px; }
+  .evento p{ color: rgba(246,239,233,.75); line-height:1.6; font-size: .98rem; }
+  .placeholder{ color: var(--dourado); font-style: italic; opacity:.85; }
+
+  .galeria{ display:grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap:18px; }
+  .foto{ aspect-ratio: 4/5; background: linear-gradient(160deg, #201620, #140d13); border: 1px solid rgba(201,168,118,.18); border-radius: 6px; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; cursor:pointer; transition: transform .3s ease; }
+  .foto:active{ transform: scale(.97); }
+  .foto span{ font-size:.85rem; color: var(--rose); font-family: var(--serif); font-style:italic; }
+  .foto small{ display:block; margin-top:8px; color: var(--dourado); font-size:.72rem; letter-spacing:.05em; }
+
+  #contador{ text-align:center; }
+  .numeros{ display:flex; justify-content:center; gap: 18px; flex-wrap:wrap; margin: 12px 0 20px; }
+  .numero-bloco{ min-width: 74px; }
+  .numero-bloco .num{ font-family: var(--serif); font-size: clamp(2.1rem,7vw,3.1rem); color: var(--branco); font-weight:600; }
+  .numero-bloco .label{ font-size: .72rem; letter-spacing:.1em; color: var(--rose); margin-top:4px; text-transform: uppercase; }
+
+  .cards{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+  .card{ background: rgba(92,24,38,.14); border:1px solid rgba(201,168,118,.2); border-radius:10px; padding: 22px 18px; cursor:pointer; transition: background .3s ease; text-align:left; width:100%; color:inherit; }
+  .card h4{ font-size: 1.1rem; font-weight:500; color: var(--branco); }
+  .card p{ max-height:0; overflow:hidden; opacity:0; transition: max-height .5s ease, opacity .5s ease, margin .4s ease; color: rgba(246,239,233,.78); font-size:.92rem; line-height:1.6; }
+  .card.aberto p{ max-height: 200px; opacity:1; margin-top:10px; }
+  .card.aberto{ background: rgba(92,24,38,.28); }
+
+  #surpresa{ background: radial-gradient(ellipse at 50% 50%, rgba(92,24,38,.25), transparent 70%); text-align:center; }
+  .surpresa-msg{ max-width: 520px; margin: 30px auto 0; font-family: var(--serif); font-size: clamp(1.2rem,4vw,1.5rem); font-style: italic; line-height:1.7; color: var(--rose); opacity:0; transition: opacity 1s ease; }
+  .surpresa-msg.ver{ opacity:1; }
+
+  #declaracao{ background: var(--preto-azulado); }
+  .carta-final{ background: linear-gradient(180deg,#150f14,#0f0b0f); border:1px solid rgba(201,168,118,.22); border-radius: 12px; padding: 40px 26px; text-align:center; }
+  .carta-final p{ font-family: var(--serif); font-size: clamp(1.1rem,3.4vw,1.35rem); line-height:1.8; margin-bottom:18px; color: var(--branco); }
+  .carta-final .final-amo{ font-size: clamp(1.5rem,5vw,1.9rem); color: var(--dourado); margin: 26px 0 6px; }
+
+  #final{ min-height: 90vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background: var(--preto); }
+  #final h2{ font-size: clamp(2rem,7vw,2.8rem); font-weight:500; }
+  #final .cap{ color: var(--rose); font-family: var(--serif); font-style:italic; margin-top: 14px; font-size:1.15rem; }
+  #final .continua{ margin-top: 40px; letter-spacing:.2em; font-size:.8rem; color: var(--dourado); opacity:.8; }
+  .coracao-final{ margin-top: 26px; width: 28px; height: 28px; animation: bate 2.6s ease-in-out infinite; transform-origin:center; backface-visibility:hidden; will-change: transform, filter; }
+  .coracao-final svg{ width:100%; height:100%; display:block; }
+  @keyframes bate{ 0%,100%{transform:scale(1); filter:drop-shadow(0 0 0 rgba(201,168,118,0));} 50%{transform:scale(1.07); filter:drop-shadow(0 0 6px rgba(201,168,118,.55));} }
+
+  #musica-btn{
+    position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom,0px)); z-index: 60;
+    background: rgba(11,10,13,.75); backdrop-filter: blur(8px); border: 1px solid rgba(201,168,118,.3);
+    color: var(--branco); border-radius: 999px; padding: 10px 18px; font-size:.85rem; cursor:pointer;
+    display:none; align-items:center; gap:8px;
+  }
+  #musica-btn.visivel{ display:flex; }
+
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-thumb{ background: var(--vinho); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<div id="abertura">
+  <div id="linha1" class="linha-abertura">Para <span class="js-nome-dela">Ana</span>…</div>
+  <div id="linha2" class="linha-abertura" style="font-size:clamp(1rem,4vw,1.3rem); margin-top:14px;">Uma pequena surpresa feita por <span class="js-nome-dele">Gustavo</span> ❤️</div>
+
+  <div class="envelope-wrap" id="envelope-wrap">
+    <div class="envelope" id="envelope">
+      <div class="env-corpo"></div>
+      <div class="env-selo"><svg viewBox="0 0 24 24" fill="#340c14"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.8 2 5 5.6 5c2 0 3.4 1.1 4.2 2.4C10.6 6.1 12 5 14 5c3.6 0 5.2 3.8 3.6 6.9C19.5 16.4 12 21 12 21z"/></svg></div>
+      <div class="env-aba"></div>
+    </div>
+    <p class="toque">Você recebeu uma carta.</p>
+    <button type="button" class="btn btn-oculto" id="btn-abrir">Abrir carta ❤️</button>
+  </div>
+</div>
+
+<div id="carta-modal">
+  <div class="carta-papel">
+    <h2><span class="js-nome-dela">Ana</span>, essa é para você…</h2>
+    <p>Talvez um mês pareça pouco tempo para algumas pessoas.</p>
+    <p>Mas, quando se trata de você, um mês foi suficiente para criar momentos que eu quero guardar para sempre.</p>
+    <p>Cada conversa, cada risada, cada momento juntos e cada pequena lembrança fizeram esse primeiro mês se tornar especial para mim.</p>
+    <p>Então eu quis fazer algo diferente. Uma pequena lembrança digital para marcar o começo da nossa história.</p>
+    <p class="assinatura">Feliz 1 mês, <span class="js-nome-dela">Ana</span>. ❤️</p>
+    <button type="button" class="btn" id="btn-continuar">Continuar nossa história →</button>
+  </div>
+</div>
+
+<main id="conteudo">
+
+  <section id="hero">
+    <p class="eyebrow">GUSTAVO & ANA</p>
+    <h1>1 mês de nós ❤️</h1>
+    <p class="nomes">O começo da nossa história</p>
+    <p>Um mês pode parecer pouco para o mundo. Para mim, foi tempo suficiente para perceber o quanto você se tornou especial.</p>
+    <a href="#historia" class="seta-baixo">Ver nossa história<span>↓</span></a>
+  </section>
+
+  <section id="historia">
+    <h2 class="titulo-secao reveal">Todo começo tem uma história.</h2>
+    <p class="subtitulo-secao reveal">E essa é a nossa.</p>
+    <div class="linha-tempo">
+      <div class="evento reveal"><h3>O começo</h3><p>Foi aqui que tudo começou. <span class="placeholder">[EDITAR: conte como vocês se conheceram]</span></p></div>
+      <div class="evento reveal"><h3>As primeiras conversas</h3><p>Pouco a pouco, conversar com você começou a se tornar uma das minhas partes favoritas do dia.</p></div>
+      <div class="evento reveal"><h3>O momento especial</h3><p>Em algum momento, deixou de ser apenas uma conversa e passou a significar muito mais. <span class="placeholder">[EDITAR: o momento em que percebeu]</span></p></div>
+      <div class="evento reveal"><h3>Nós</h3><p>E então surgiu o nosso "nós". <span class="placeholder">[EDITAR: quando começaram a namorar]</span></p></div>
+      <div class="evento reveal"><h3>1 mês</h3><p>Hoje estamos aqui. Nosso primeiro mês.</p></div>
+    </div>
+  </section>
+
+  <section id="memorias">
+    <h2 class="titulo-secao reveal">Alguns dos meus momentos favoritos com você ❤️</h2>
+    <p class="subtitulo-secao reveal">Toque para ampliar</p>
+    <div class="galeria">
+      <div class="foto reveal"><span>[FOTO 01]<small>Substitua por uma foto real</small></span></div>
+      <div class="foto reveal"><span>[FOTO 02]<small>Substitua por uma foto real</small></span></div>
+      <div class="foto reveal"><span>[FOTO 03]<small>Substitua por uma foto real</small></span></div>
+      <div class="foto reveal"><span>[FOTO 04]<small>Substitua por uma foto real</small></span></div>
+    </div>
+  </section>
+
+  <section id="contador">
+    <h2 class="titulo-secao reveal">E o nosso primeiro mês continua…</h2>
+    <div class="numeros reveal">
+      <div class="numero-bloco"><div class="num" id="num-dias">00</div><div class="label">dias</div></div>
+      <div class="numero-bloco"><div class="num" id="num-horas">00</div><div class="label">horas</div></div>
+      <div class="numero-bloco"><div class="num" id="num-min">00</div><div class="label">min</div></div>
+      <div class="numero-bloco"><div class="num" id="num-seg">00</div><div class="label">seg</div></div>
+    </div>
+    <p class="reveal" style="color:rgba(246,239,233,.7); font-size:.95rem;">Cada segundo ao seu lado se transforma em uma memória.</p>
+  </section>
+
+  <section id="voce">
+    <h2 class="titulo-secao reveal">Algumas coisas que fazem você ser você.</h2>
+    <p class="subtitulo-secao reveal">Toque em cada uma</p>
+    <div class="cards">
+      <button type="button" class="card reveal"><h4>Seu sorriso ❤️</h4><p>[EDITAR: por que o sorriso dela é especial para você]</p></button>
+      <button type="button" class="card reveal"><h4>Seu jeito</h4><p>[EDITAR: o que você ama no jeito dela de ser]</p></button>
+      <button type="button" class="card reveal"><h4>Nossas conversas</h4><p>[EDITAR: uma conversa que marcou você]</p></button>
+      <button type="button" class="card reveal"><h4>A forma como você me faz sorrir</h4><p>[EDITAR: um exemplo real]</p></button>
+      <button type="button" class="card reveal"><h4>Os nossos momentos</h4><p>[EDITAR: um momento que vocês viveram]</p></button>
+      <button type="button" class="card reveal"><h4>Simplesmente você.</h4><p>[EDITAR: uma mensagem final e pessoal]</p></button>
+    </div>
+  </section>
+
+  <section id="surpresa">
+    <h2 class="titulo-secao reveal">Mas eu ainda não terminei…</h2>
+    <p class="reveal" style="color:rgba(246,239,233,.75);">Eu guardei uma última coisa para você.</p>
+    <button type="button" class="btn btn-secundario reveal" id="btn-surpresa">Abrir minha surpresa ❤️</button>
+    <p class="surpresa-msg" id="surpresa-msg">Se eu pudesse voltar para o começo de tudo, eu escolheria viver cada momento novamente — porque cada um deles me trouxe até você.<br><br>E se esse primeiro mês já foi tão especial… imagina tudo que ainda podemos viver. ❤️</p>
+  </section>
+
+  <section id="declaracao">
+    <h2 class="titulo-secao reveal">E se esse for apenas o primeiro capítulo?</h2>
+    <div class="carta-final reveal">
+      <p><span class="js-nome-dela">Ana</span>, esse primeiro mês passou rápido demais — e ao mesmo tempo, parece que já vivemos tanta coisa boa juntos.</p>
+      <p>Eu queria te agradecer por cada conversa, por cada risada boba, por cada momento em que você me fez sentir que estar do seu lado é exatamente onde eu quero estar.</p>
+      <p>Sinto sua falta até quando estamos separados por poucas horas, e fico feliz só de pensar em tudo que ainda vamos viver.</p>
+      <p>Esse é só o começo, e eu quero continuar escrevendo essa história com você, um dia de cada vez.</p>
+      <p class="final-amo">Eu te amo, <span class="js-nome-dela">Ana</span>. ❤️</p>
+      <p style="font-style:italic; color: var(--rose);">Feliz nosso primeiro mês.</p>
+      <p style="margin-top:22px;">Com amor,<br><strong class="js-nome-dele" style="font-family:var(--serif); font-style:italic; color:var(--dourado); font-size:1.2rem;">Gustavo</strong></p>
+    </div>
+  </section>
+
+  <section id="final">
+    <h2><span class="js-nome-dele">Gustavo</span> ❤️ <span class="js-nome-dela">Ana</span></h2>
+    <p class="cap">Capítulo 1: 1 mês.</p>
+    <p class="continua">CONTINUA…</p>
+    <div class="coracao-final"><svg viewBox="0 0 24 24" fill="#c9a876"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.8 2 5 5.6 5c2 0 3.4 1.1 4.2 2.4C10.6 6.1 12 5 14 5c3.6 0 5.2 3.8 3.6 6.9C19.5 16.4 12 21 12 21z"/></svg></div>
+  </section>
+
+</main>
+
+<button type="button" id="musica-btn">♫ <span id="musica-estado">Música</span></button>
+<audio id="audio-fundo" loop></audio>
+
+<script>
+function iniciarSite(){
+  'use strict';
+
+  /* ============ EDITE AQUI ============ */
+  var NOME_DELA = "Ana";
+  var MEU_NOME = "Gustavo";
+  var DATA_INICIO_NAMORO = ""; // ex: "2026-08-27T00:00:00" — vazio usa o momento em que a página abre
+  var MUSICA_URL = ""; // link direto para um .mp3
+
+  document.querySelectorAll('.js-nome-dela').forEach(function(el){ el.textContent = NOME_DELA; });
+  document.querySelectorAll('.js-nome-dele').forEach(function(el){ el.textContent = MEU_NOME; });
+
+  var abertura = document.getElementById('abertura');
+  var linha1 = document.getElementById('linha1');
+  var linha2 = document.getElementById('linha2');
+  var envelopeWrap = document.getElementById('envelope-wrap');
+  var envelope = document.getElementById('envelope');
+  var btnAbrir = document.getElementById('btn-abrir');
+  var cartaModal = document.getElementById('carta-modal');
+  var btnContinuar = document.getElementById('btn-continuar');
+  var conteudo = document.getElementById('conteudo');
+  var isOpening = false;
+
+  /* sequência de entrada — puramente visual, não bloqueia nenhum clique */
+  setTimeout(function(){ linha1.classList.add('on'); }, 250);
+  setTimeout(function(){ linha2.classList.add('on'); }, 1500);
+  setTimeout(function(){ envelopeWrap.classList.add('on'); }, 2500);
+  setTimeout(function(){ btnAbrir.classList.add('on'); }, 3300);
+
+  function criarParticulas(origemEl){
+    try{
+      var rect = origemEl.getBoundingClientRect();
+      for(var i=0;i<8;i++){
+        var p = document.createElement('div');
+        p.className='particula';
+        p.textContent = Math.random()>0.5 ? '❤' : '✦';
+        p.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*80) + 'px';
+        p.style.top = (rect.top + rect.height/2) + 'px';
+        p.style.animation = 'subir-sumir ' + (1.6+Math.random()) + 's ease forwards';
+        document.body.appendChild(p);
+        setTimeout(function(el){ return function(){ el.remove(); }; }(p), 2800);
+      }
+    }catch(e){}
+  }
+
+  function abrirCarta(ev){
+    if(ev && ev.cancelable) ev.preventDefault();
+    if(isOpening) return;
+    isOpening = true;
+    envelope.classList.add('aberto');
+    criarParticulas(envelope);
+    if(MUSICA_URL){
+      var audio = document.getElementById('audio-fundo');
+      audio.play().catch(function(){});
+    }
+    setTimeout(function(){ cartaModal.classList.add('ver'); }, 450);
+  }
+
+  function ligarBotao(el, handler){
+    if(!el) return;
+    var disparado = false;
+    function disparar(ev){
+      if(disparado) return;
+      disparado = true;
+      handler(ev);
+      setTimeout(function(){ disparado = false; }, 800);
+    }
+    el.addEventListener('click', disparar);
+    el.addEventListener('touchend', disparar, { passive:false });
+  }
+
+  ligarBotao(envelope, abrirCarta);
+  ligarBotao(btnAbrir, abrirCarta);
+
+  ligarBotao(btnContinuar, function(){
+    cartaModal.classList.remove('ver');
+    abertura.classList.add('saiu');
+    setTimeout(function(){ conteudo.classList.add('visivel'); }, 500);
+  });
+
+  /* scroll reveal */
+  if('IntersectionObserver' in window){
+    var observador = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('ativo'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(function(el){ observador.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('ativo'); });
+  }
+
+  /* cards "coisas que eu amo" */
+  document.querySelectorAll('.card').forEach(function(c){
+    c.addEventListener('click', function(){ c.classList.toggle('aberto'); });
+  });
+
+  /* surpresa */
+  var btnSurpresa = document.getElementById('btn-surpresa');
+  btnSurpresa.addEventListener('click', function(){
+    document.getElementById('surpresa-msg').classList.add('ver');
+    btnSurpresa.style.display = 'none';
+  });
+
+  /* contador */
+  var dataBase = DATA_INICIO_NAMORO ? new Date(DATA_INICIO_NAMORO) : new Date();
+  function atualizarContador(){
+    var agora = new Date();
+    var diff = Math.max(0, agora - dataBase);
+    var dias = Math.floor(diff / 86400000);
+    var horas = Math.floor((diff % 86400000) / 3600000);
+    var min = Math.floor((diff % 3600000) / 60000);
+    var seg = Math.floor((diff % 60000) / 1000);
+    document.getElementById('num-dias').textContent = String(dias).padStart(2,'0');
+    document.getElementById('num-horas').textContent = String(horas).padStart(2,'0');
+    document.getElementById('num-min').textContent = String(min).padStart(2,'0');
+    document.getElementById('num-seg').textContent = String(seg).padStart(2,'0');
+  }
+  atualizarContador();
+  setInterval(atualizarContador, 1000);
+
+  /* música opcional */
+  var musicaBtn = document.getElementById('musica-btn');
+  var audioEl = document.getElementById('audio-fundo');
+  var musicaAtivada = false;
+  if(MUSICA_URL){
+    audioEl.src = MUSICA_URL;
+    musicaBtn.classList.add('visivel');
+  }
+  musicaBtn.addEventListener('click', function(){
+    if(!MUSICA_URL) return;
+    if(musicaAtivada){ audioEl.pause(); document.getElementById('musica-estado').textContent = 'Música'; }
+    else { audioEl.play().catch(function(){}); document.getElementById('musica-estado').textContent = 'Pausar'; }
+    musicaAtivada = !musicaAtivada;
+  });
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', iniciarSite);
+} else {
+  iniciarSite();
+}
+</script>
+</body>
+</html>
